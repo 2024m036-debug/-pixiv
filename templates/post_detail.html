@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }} - 蔵書詳細</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #f4f1ea;
+            background-image: url('https://www.transparenttextures.com/patterns/paper.png');
+            font-family: 'Sawarabi Mincho', serif;
+            color: #3e2723;
+            padding-bottom: 60px;
+        }
+
+        /* 本のページのようなメインコンテナ */
+        .book-page {
+            background: #fff;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 60px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid #d7ccc8;
+            position: relative;
+        }
+
+        /* 栞（しおり）風のログアウトボタンを右上に置くイメージ */
+        .action-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+
+        .title-section h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: #5d4037;
+        }
+
+        .title-kana {
+            font-size: 1.2rem;
+            color: #8d6e63;
+            margin-top: 5px;
+        }
+
+        /* 操作ボタン群 */
+        .btn-group-library {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-lib {
+            border-radius: 0;
+            font-size: 0.85rem;
+            padding: 8px 15px;
+            font-weight: bold;
+            border: none;
+        }
+
+        .summary-box {
+            font-style: italic;
+            border-left: 3px solid #d7ccc8;
+            padding-left: 20px;
+            margin: 30px 0;
+            color: #5d4037;
+        }
+
+        .main-content {
+            font-size: 1.15rem;
+            line-height: 2;
+            white-space: pre-wrap;
+            margin-bottom: 50px;
+        }
+
+        /* 追加情報のセクション */
+        .sub-content-section {
+            margin-top: 60px;
+            border-top: 2px double #d7ccc8;
+            padding-top: 40px;
+        }
+
+        .sub-content-card {
+            background: #fdfbf7;
+            border: 1px solid #efebe9;
+            margin-bottom: 15px;
+            border-radius: 0;
+        }
+
+        .sub-content-header {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: #f5f2ed;
+        }
+
+        .sub-content-body {
+            padding: 20px;
+            border-top: 1px solid #efebe9;
+        }
+
+        .footer-info {
+            font-size: 0.85rem;
+            color: #a1887f;
+            text-align: right;
+            margin-top: 40px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #8d6e63;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            color: #5d4037;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="book-page">
+        <div class="action-header">
+            <div class="title-section d-flex align-items-center">
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px; margin-right: 25px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+                {% endif %}
+                <div>
+                    <h1>{{ post.title }}</h1>
+                    <div class="title-kana">（{{ post.title_kana }}）</div>
+                </div>
+            </div>
+
+            <div class="btn-group-library">
+                <a href="{% url 'add_sub_content' post.pk %}" class="btn btn-primary btn-lib">＋ 詳細を追加</a>
+                <a href="{% url 'edit_post' post.pk %}" class="btn btn-success btn-lib">編集</a>
+                <form action="{% url 'delete_post' post.pk %}" method="POST" onsubmit="return confirm('削除しますか？');" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-lib">削除</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="summary-box">
+            {{ post.summary }}
+        </div>
+
+        <div class="main-content">
+            {{ post.content|linebreaks }}
+        </div>
+
+        {% if post.image_url %}
+            <div class="text-center my-5">
+                <img src="{{ post.image_url }}" alt="AI Image" class="img-fluid rounded shadow-sm">
+                <p class="text-muted small mt-2">※アーカイブに付随するイメージ画像</p>
+            </div>
+        {% endif %}
+
+        <div class="sub-content-section">
+            <h4 class="mb-4" style="font-family: 'Playfair Display', serif; font-style: italic;">Appendix / Detailed Records</h4>
+            
+            {% for sub in post.sub_contents.all %}
+                <div class="sub-content-card">
+                    <div class="sub-content-header" onclick="toggleSubContent(this)">
+                        <span class="fw-bold">{{ sub.title }}</span>
+                        <span class="text-muted small">開く / 閉じる</span>
+                    </div>
+                    <div class="sub-content-body" style="display: none;">
+                        <p style="white-space: pre-wrap;">{{ sub.content }}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <small class="text-muted">記録日: {{ sub.created_at|date:"Y/m/d H:i" }}</small>
+                            <div>
+                                <a href="{% url 'edit_sub_content' sub.pk %}" class="btn btn-sm btn-outline-success border-0">編集</a>
+                                <form action="{% url 'delete_sub_content' sub.pk %}" method="POST" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger border-0">削除</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-muted small italic">現在、追加の記録はありません。</p>
+            {% endfor %}
+        </div>
+
+        <div class="footer-info">
+            司書(投稿者): {{ post.author.username }} <br>
+            登録日時: {{ post.created_at|date:"Y年m月d日 H:i" }}
+        </div>
+
+        <a href="{% url 'timeline' %}" class="back-link">← 目録（タイムライン）に戻る</a>
+    </div>
+</div>
+
+<script>
+    function toggleSubContent(headerElement) {
+        const body = headerElement.nextElementSibling;
+        if (body.style.display === 'none') {
+            body.style.display = 'block';
+        } else {
+            body.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #f4f1ea; /* 古い紙のような色 */
+            background-image: url('https://www.transparenttextures.com/patterns/paper.png'); /* 紙の質感 */
+            font-family: 'Sawarabi Mincho', serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .login-card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 2px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-left: 15px solid #5d4037; /* 本の背表紙のようなアクセント */
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+        }
+
+        .login-card::after {
+            content: "";
+            position: absolute;
+            top: 0; right: 10px;
+            width: 20px; height: 40px;
+            background: #d32f2f; /* 栞（しおり） */
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            color: #5d4037;
+            text-align: center;
+            margin-bottom: 30px;
+            font-style: italic;
+            border-bottom: 1px double #d7ccc8;
+            padding-bottom: 10px;
+        }
+
+        .form-label {
+            color: #795548;
+            font-weight: bold;
+        }
+
+        .form-control {
+            border: none;
+            border-bottom: 1px solid #d7ccc8;
+            border-radius: 0;
+            padding-left: 0;
+            background: transparent;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-bottom: 2px solid #5d4037;
+            background: transparent;
+        }
+
+        .btn-library {
+            background-color: #5d4037;
+            color: #fff;
+            width: 100%;
+            border-radius: 0;
+            margin-top: 20px;
+            padding: 10px;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        .btn-library:hover {
+            background-color: #3e2723;
+            color: #eee;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .decoration {
+            text-align: center;
+            font-size: 0.8em;
+            color: #a1887f;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <h1>Archive Login</h1>
+    
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_username" class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" id="id_username" required>
+        </div>
+        
+        <div class="mb-4">
+            <label for="id_password" class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" id="id_password" required>
+        </div>
+        
+        <button type="submit" class="btn btn-library">ログイン</button>
+    </form>
+
+    <div class="decoration">
+        — 静かな読書の時間をお楽しみください —
+    </div>
+</div>
+
+</body>
+</html>
