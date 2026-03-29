@@ -5,8 +5,11 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return "Pixiv App is running!"
+    # Renderがこの文字を読み取れれば「Live」になります
+    return "OK"
 
 if __name__ == "__main__":
+    # Render環境では PORT 環境変数が必須です
     port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    # host='0.0.0.0' がないと外部（Render）から接続できません
+    app.run(host='0.0.0.0', port=port)
