@@ -1,7 +1,12 @@
-print("Hello, Render! Pixiv app is starting...")
-
+from flask import Flask
 import os
-from pixivpy3 import *
 
-# ここにあなたのプログラムを書いていきます
-print("Pixivpy3 loaded successfully!")
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return "Pixiv App is running!"
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
